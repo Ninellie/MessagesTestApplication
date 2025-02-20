@@ -1,0 +1,33 @@
+﻿@model List<Message>
+@{
+    ViewData["Title"] = "Client 3";
+}
+<h1>@ViewData["Title"]</h1>
+
+<h2>История сообщений (последние 10 минут)</h2>
+
+<button onclick="reloadMessages()">Reload</button>
+
+<ul id="messageList">
+    @foreach (var message in Model)
+    {
+        <li><strong>@message.ReceivedAt.ToString("HH:mm:ss")</strong> [#@message.Id]: @message.Text</li>
+    }
+</ul>
+
+<script>
+    function reloadMessages() {
+        fetch('/Home/GetMessages')
+            .then(response => response.json())
+            .then(data => {
+                let list = document.getElementById("messageList");
+                list.innerHTML = "";
+                data.forEach(msg => {
+                    let item = document.createElement("li");
+                    item.innerHTML = `<strong>${new Date(msg.receivedAt).toLocaleTimeString()}</strong> [#${msg.id}]: ${msg.text}`;
+                    list.appendChild(item);
+                });
+            })
+            .catch(error => console.error("Error loading messages:", error));
+    }
+</script>

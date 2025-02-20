@@ -1,0 +1,34 @@
+﻿@model List<Message>
+@{
+    ViewData["Title"] = "Client 2";
+}
+<h1>@ViewData["Title"]</h1>
+
+<h2>История сообщений (Live)</h2>
+
+<ul id="messageList">
+    @foreach (var message in Model)
+    {
+        <li><strong>@message.ReceivedAt.ToString("HH:mm:ss")</strong> [#@message.Id]: @message.Text</li>
+    }
+</ul>
+
+<script>
+    let webSocketUrl = "@ViewBag.WebSocketUrl";
+    let socket = new WebSocket(webSocketUrl);
+
+    socket.onmessage = function(event) {
+        let data = JSON.parse(event.data);
+        let list = document.getElementById("messageList");
+        let item = document.createElement("li");
+        console.log("New message received via WebSocket", data);
+        item.innerHTML = `<strong>${new Date(data.received_at).toLocaleTimeString()}</strong> [#${data.id}]: ${data.text}`;
+        list.appendChild(item);
+    };
+
+    socket.onclose = function() {
+        console.log("WebSocket closed. Reconnecting...");
+        setTimeout(() => location.reload(), 5000);
+    };
+
+</script>

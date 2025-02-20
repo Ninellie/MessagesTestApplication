@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Client 1";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Client 1</h1>
+</div>
+
+@using (Html.BeginForm("ProcessInputClient1", "Home", FormMethod.Post))
+{
+    <input type="text" name="userInput" placeholder="Введите текст" />
+    <button type="submit">Отправить</button>
+}
